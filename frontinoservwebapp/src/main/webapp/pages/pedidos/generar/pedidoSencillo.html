@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Portal de Clientes Frontino</title>
+        <style>
+            .full button span {
+                background-color: limegreen;
+                border-radius: 32px;
+                color: black;
+            }
+            .partially button span {
+                background-color: orange;
+                border-radius: 32px;
+                color: black;
+            }
+        </style>
+
+        <link href="css/datatables/dataTables.bootstrap.css" rel="stylesheet">
+        <script src="js/datatables/jquery.dataTables.min.js"></script>
+        <script src="js/datatables/dataTables.bootstrap.min.js"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    <body>
+
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Nuevo Pedido
+
+                        <button class="btn btn-primary btn-circle pull-right"
+                                ng-click="regresar()" title="Regresar a Dashboard">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                        <div class="clearfix"></div>
+
+                    </h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+
+
+
+
+
+
+
+
+            <div>
+                <uib-tabset active="activeJustified" justified="true">
+                    <!-- GAMA DE PRODUCTOS-->
+                    <uib-tab index="0" heading="{{translation.products}}">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="panel-group">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">                            
+
+                                                <a data-toggle="collapse" 
+                                                   data-target="#collapse1">
+                                                    Filtro de Busqueda
+                                                    <i class="btn btn-primary btn-circle fa fa-search"></i>
+                                                </a>
+
+                                            </h4>
+
+
+
+                                        </div>
+                                        <div id="collapse1" class="panel-collapse collapse">
+
+
+                                            <div class="panel-body">
+                                                <div class="row-">
+                                                    <div class="col-sm-1">
+                                                        <label for="desde">Desde</label>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <p class="input-group">
+                                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                                                                   ng-model="fecDesde" 
+                                                                   is-open="opendesde" 
+                                                                   show-button-bar="false"
+                                                                   datepicker-options="dateOptions" ng-required="true" 
+                                                                   close-text="Close" />
+                                                            <span class="input-group-btn">
+                                                                <button type="button" class="btn btn-default" ng-click="openDesde()"><i class="fa fa-calendar"></i></button>
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-lg-1">
+
+                                                        <label for="desde">Hasta</label>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <p class="input-group">
+                                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                                                                   ng-model="fecHasta" 
+                                                                   is-open="openhasta" 
+                                                                   show-button-bar="false"
+                                                                   datepicker-options="dateOptions" ng-required="true" 
+                                                                   close-text="Close" />
+                                                            <span class="input-group-btn">
+                                                                <button type="button" class="btn btn-default" ng-click="openHasta()"><i class="fa fa-calendar"></i></button>
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-lg-1">
+                                                        <label for="desde">Status</label>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <select class="form-control" ng-model="staPed">
+                                                            <option value="1">Creado</option>
+                                                            <option value="3">Facturado</option>
+                                                            <option value="2">Anulado</option>
+                                                            <option value="4">Despachado</option>
+                                                            <option value="5">Todos</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <button type="submit" class="btn btn-primary"
+                                                                ng-click="listadoPedidos()">Buscar</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th width="40%" class="text-center" colspan="2">Articulo</th>
+                                                <th class="text-center hidden-xs" title="Unidad de Medida">U.M</th>
+                                                <th class="text-center hidden-xs">Precio </th>
+                                                <th class="text-center hidden-xs">%</th>
+                                                <th class="text-center hidden-xs">Precio Unitario</th>
+                                                <th class="text-center">
+                                                    <i class="fa fa-shopping-cart fa-fw"></i>
+                                                </th>
+                                                <th class="text-center hidden-xs">Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="item in objetosList">
+                                                <td class="text-center">
+                                                    <img ng-src="images/articulos/{{item.ide_pro.cod_pro}}.jpg" 
+                                                         height="50px" width="50px"
+                                                         alt="Description" />
+                                                </td>
+                                                <td>{{item.ide_pro.ds1_pro}}</td>
+                                                <td class="hidden-xs"> {{item.ide_und.dec_und}}</td>
+                                                <td class="text-right hidden-xs" >{{item.pre_ddv| number:2}}</td>
+                                                <td class="text-right hidden-xs">{{item.pi1_ddv| number:2}}</td>
+                                                <td class="text-right hidden-xs">{{(item.pre_ddv * (1 + (item.pi1_ddv / 100))) | number:2}}</td>
+                                                <td align="center" >
+                                                    <a ng-click="seleccion(1, item)"  class="btn btn-success btn-circle">
+                                                        <i class="fa fa-plus"></i>
+                                                    </a>
+                                                    <a ng-click="seleccion(-1, item)" class="btn btn-danger btn-circle">
+                                                        <i class="fa fa-minus"></i>
+                                                    </a>
+                                                </td>
+                                                <td class="col-xs-2 hidden-xs"> 
+
+                                                    <input type="number" ng-change="orden(item)" class="form-control" ng-model="item.can_ddv"/>                                           
+
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <!-- PRODUCTOS AGREGADOS A ORDEN-->
+                    <uib-tab index="1" heading="{{translation.yourOrder}}">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Articulo</th>
+                                                <th>U.M</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio</th>
+                                                <th>Descuento</th>
+                                                <th>Impuesto</th>
+                                                <th>Total</th>
+                                                <th><i class="fa fa-remove fa-fw"></i></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="item in objetosSeleccionados">
+                                                <td>{{item.ide_pro.cod_pro}} - {{item.ide_pro.ds1_pro}}</td>
+                                                <td>{{item.ide_und.dec_und}}</td>
+                                                <td class="text-right">{{item.can_ddv| number:2}}</td>
+                                                <td class="text-right">{{item.pre_ddv| number:2}}</td>
+                                                <td class="text-right">{{item.dto_ddv| number:2}}</td>
+                                                <td class="text-right">{{item.iva_ddv| number:2}}</td>
+                                                <td class="text-right">{{item.tto_ddv| number:2}}</td>
+                                                <td align="center">
+                                                    <a ng-click="remover(item)" class="btn btn-danger btn-circle">
+                                                        <i class="fa fa-remove"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab index="2" heading="{{translation.totals}}">
+
+
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="panel">
+
+
+                                    <table class="table table-bordered" width="50%">
+                                        <thead class="primary">
+                                            <tr >
+                                                <th colspan="2"><h4>Totales de Orden de Pedido</h4>
+                                        </th>
+                                        </tr>
+                                        </thead>
+                                        <tr>
+                                            <td><label>Cantidad</label></td>
+                                            <td class="text-right">{{totales.lineas| number:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><label >Exento</label></td>
+                                            <td class="text-right">{{totales.exento| number:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><label >Gravado</label></td>
+                                            <td class="text-right">{{totales.gravado| number:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><label >Impuesto</label></td>
+                                            <td class="text-right">{{totales.impuesto| number:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><label >Total</label></td>
+                                            <td class="text-right"><label>{{totales.total| number:2}}</label></td>
+                                        </tr>
+
+                                    </table>
+
+                                    <div class="form-group">
+                                        <div class="text-right">
+                                            <a ng-click="limpiarDetalle()" class="btn btn-default">Cancelar</a>
+                                            
+                                            <button ng-click="save()" ng-disabled="myForm.$invalid"
+                                                    class="btn btn-primary">Guardar
+                                            </button>
+
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                </uib-tabset>
+
+            </div>
+
+
+            <script>
+                        $(document).ready(function () {
+                            $('#dataTables-example').DataTable();
+                        });
+
+
+                        $(document).ready(function () {
+                            $('.datepicker').datepicker({
+                                format: "dd/mm/yyyy",
+                                language: "es",
+                                autoclose: true,
+                                todayHighlight: true,
+                                startDate: '+1d'
+                            });
+                        });
+
+
+                        $(function () {
+
+                            $('#dp3').datepicker({
+                                autoclose: true
+                            });
+
+                            $('.date-picker').datepicker({
+                                autoclose: true
+                            });
+
+
+                            $('#datetimepicker2').datepicker(
+                                    {
+                                        "setDate": new Date(),
+                                        "autoclose": true
+                                    }
+                            );
+
+
+                        });
+
+
+            </script> 
+
+
+    </body>
+
+</html>

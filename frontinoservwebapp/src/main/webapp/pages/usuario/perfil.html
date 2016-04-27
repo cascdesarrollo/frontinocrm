@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Portal de Clientes Frontino</title>
+        <style>
+            .full button span {
+                background-color: limegreen;
+                border-radius: 32px;
+                color: black;
+            }
+            .partially button span {
+                background-color: orange;
+                border-radius: 32px;
+                color: black;
+            }
+        </style>
+
+        <link href="css/datatables/dataTables.bootstrap.css" rel="stylesheet">
+        <script src="js/datatables/jquery.dataTables.min.js"></script>
+        <script src="js/datatables/dataTables.bootstrap.min.js"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    <body>
+
+
+
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Perfil
+
+                        <button class="btn btn-primary btn-circle pull-right"
+                                ng-click="regresar()" title="Regresar a Dashboard">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                        <div class="clearfix"></div>
+
+                    </h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+
+            <div class="panel-group">
+
+                <div class = "panel panel-default">
+                    <div class = "panel-heading">Datos de Usuario</div>
+
+                    <table class = "table">
+                        <tr>
+                            <td>Nombre de Cliente</td>
+                            <td>{{dataSes.nomTer}}</td>
+                        </tr>
+                        <tr>
+                            <td>Direccion de Entrega</td>
+                            <td>{{dataSes.dieTer}}</td>
+                        </tr>
+                        <tr>
+                            <td>Telefono 1</td>
+                            <td>{{dataSes.tl1Ter}}</td>
+                        </tr>
+                        <tr>
+                            <td>Telefono 2</td>
+                            <td>{{dataSes.tl2Ter}}</td>
+                        </tr>
+                        <tr>
+                            <td>R.I.F</td>
+                            <td>{{dataSes.rifTer}}</td>
+                        </tr>
+                        <tr>
+                            <td>Razon Social</td>
+                            <td>{{dataSes.razTer}}</td>
+                        </tr>
+                        <tr>
+                            <td>Direccion Fiscal</td>
+                            <td>{{dataSes.dirTer}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </body>
+
+</html>

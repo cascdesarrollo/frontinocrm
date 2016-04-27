@@ -1,0 +1,17 @@
+{
+    "welcome": "Welcome",
+    "appNameFull": "Frontino Clients Site",
+    "appName": "Clients Site",
+    "welcome": "Welcome",
+    "dashboard": "DashBoard",
+    "email": "E-mail",
+    "password": "Password",
+    "login": "Login",
+    "logout": "Logout",
+    "remember": "Remember Me",
+    "userProfile":"User Profile",
+    "search":"Search",
+    "products":"Products",
+    "yourOrder":"Your Order",
+    "totals":"Totals"
+}
