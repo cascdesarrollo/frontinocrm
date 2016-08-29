@@ -37,26 +37,30 @@
                 <div class="col-lg-12">
                     <h1 class="page-header">Seguimiento de Pedidos
 
-                        <button class="btn btn-primary btn-circle pull-right"
+                        <button class="btn btn-success btn-sm pull-right"
                                 ng-click="regresar()" title="Regresar a Dasboard">
                             <i class="fa fa-arrow-left"></i>
                         </button>
                         <div class="clearfix"></div>
 
                     </h1>
+                    <div class="alert alert-danger" role="alert" ng-show="muestraMensajeError">
+                        {{ mensajeError}}
+                    </div>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
 
             <div class="panel-group">
-                <div class="panel panel-default">
+                <div class="panel panel-primary">
 
 
                     <div class="panel-heading">
                         <h4 class="panel-title">  
-                            <a data-toggle="collapse" data-target="#collapse1">Filtro de Busqueda
-                                <i class="btn btn-primary btn-circle fa fa-search"></i>
+                            <a data-toggle="collapse" data-target="#collapse1" style="text-decoration: none; cursor: pointer">
+                                Filtro de Busqueda
+                                <i style="margin-left: 10px" class="btn btn-success btn-sm fa fa-search"></i>
                             </a>
                         </h4>
                     </div>
@@ -101,8 +105,10 @@
                                 <div class="col-lg-1">
                                     <label for="desde">Status</label>
                                 </div>
-                                <div class="col-lg-2">
+                                <div class="col-lg-3">
                                     <select class="form-control" ng-model="staPed">
+                                        <option value="">Sel...</option>
+                                        <option value="0">Pendiente por Confirmar</option>
                                         <option value="1">Creado</option>
                                         <option value="3">Facturado</option>
                                         <option value="2">Anulado</option>
@@ -110,8 +116,8 @@
                                         <option value="5">Todos</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-3">
-                                    <button type="submit" class="btn btn-primary"
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-success"
                                             ng-click="listadoPedidos()">Buscar</button>
                                 </div>
                             </div>
@@ -125,7 +131,7 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="panel panel-default">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             Listado de Pedidos
                         </div>
@@ -138,28 +144,31 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Fecha Pedido</th>
-                                            <th>Status</th>
+                                            <th class="text-center">Status</th>
                                             <th>Fecha Facturacion</th>
                                             <th>Factura</th>
                                             <th>Observacion</th>
-                                            <th></th>
+                                            <th colspan="2" class="text-center">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="item in objetosList">
                                             <td>{{item.ide_ped}}</td>
                                             <td>{{item.fec_ped}}</td>
-                                            <td>
-                                                <label ng-if="item.sta_ped === '1'" title="Pedido Creado">
+                                            <td class="text-center">
+                                                <label ng-show="item.sta_ped === '0'" class="btn btn-default btn-sm" title="Pedido Pendiente por Confirmación">
+                                                    P
+                                                </label>
+                                                <label ng-show="item.sta_ped === '1'" class="btn btn-info btn-sm" title="Pedido Confirmado">
                                                     C
                                                 </label>
-                                                <label ng-if="item.sta_ped === '3'" title ="Pedido Facturado">
-                                                    F
-                                                </label>
-                                                <label ng-if="item.sta_ped === '2'" title="Pedido Anulado">
+                                                <label ng-show="item.sta_ped === '2'" class="btn btn-warning btn-sm" title="Pedido Anulado">
                                                     A
                                                 </label>
-                                                <label ng-if="item.sta_ped === '4'" title="Pedido Despachado">
+                                                <label ng-show="item.sta_ped === '3'" class="btn btn-success btn-sm" title="Pedido Facturado">
+                                                    F
+                                                </label>
+                                                <label ng-show="item.sta_ped === '4'" class="btn btn-success btn-sm" title="Pedido Despachado">
                                                     D
                                                 </label>
                                             </td>
@@ -168,8 +177,23 @@
                                             <td>
                                                 {{item.obs_ped}}
                                             </td>
+                                            <td align="center" ng-hide="item.sta_ped !== '0'">
+                                                <a href="" class="btn btn-warning btn-sm"
+                                                   title="{{translation.titDeleteOrder}}"
+                                                   ng-click="anularPedido(item)"
+                                                   ng-show="item.sta_ped === '0'">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                                <a href="" class="btn btn-info btn-sm"
+                                                   title="{{translation.titconfirmOrder}}"
+                                                   ng-click="confirmarPedido(item)"
+                                                   ng-show="item.sta_ped === '0'">
+                                                    <i class="fa fa-check"></i>
+                                                </a>
+                                            </td>
                                             <td align="center">
-                                                <a href="#/seguimiento/{{item.ide_ped}}"   class="btn btn-primary btn-circle">
+                                                <a href="#/seguimiento/{{item.ide_ped}}"   class="btn btn-primary btn-sm"
+                                                   title="{{translation.titOrderDetail}}">
                                                     <i class="fa fa-list"></i>
                                                 </a>
                                             </td>

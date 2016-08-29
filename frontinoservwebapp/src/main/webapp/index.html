@@ -15,26 +15,12 @@
         <!-- Bootstrap Core CSS -->
         <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
 
-        <!-- MetisMenu CSS -->
-        <link href="css/metisMenu/metisMenu.min.css" rel="stylesheet">
-
-        <!-- Custom CSS -->
-        <link href="css/sbAdmin/sb-admin-2.css" rel="stylesheet">
-
-        <!-- Custom Fonts -->
-        <link href="css/fonts/font-awesome.min.css" rel="stylesheet" type="text/css">
 
         <!-- jQuery -->
         <script src="js/jquery/jquery.min.js"></script>
 
         <!-- Bootstrap Core JavaScript -->
         <script src="js/bootstrap/bootstrap.min.js"></script>
-
-        <!-- Metis Menu Plugin JavaScript -->
-        <script src="js/metisMenu/metisMenu.min.js"></script>
-
-        <!-- Custom Theme JavaScript -->
-        <script src="js/sbAdmin/sb-admin-2.js"></script>
 
         <script src="js/angular/angular.min.js"></script>
         <script src="js/angular/angular-route.js"></script>
@@ -70,7 +56,7 @@
                                 {{translation.appNameFull}}
                             </div>
                         </div>
-                        <div class="login-panel panel panel-default">
+                        <div class="login-panel panel panel-primary">
                             <div class="panel-heading">
                                 <h3 class="panel-title">{{translation.welcome}}</h3>
 
@@ -112,16 +98,16 @@
 
                                         <button ng-click="validateUser()" ng-disabled="myForm.$invalid || consultando"
                                                 ng-show="!empresasList.length"
-                                                class="btn btn-lg btn-success btn-block">{{translation.login}}
+                                                class="btn btn-lg btn-primary btn-block">{{translation.login}}
                                         </button>
 
                                         <button ng-click="ingresar()" ng-disabled="myForm.$invalid"
                                                 ng-show="empresasList.length"
-                                                class="btn btn-lg btn-success btn-block">Ingresar
+                                                class="btn btn-lg btn-primary btn-block">Ingresar
                                         </button>
                                         <button ng-click="cancelar()"
                                                 ng-show="empresasList.length"
-                                                class="btn btn-lg btn-default btn-block">Cancelar
+                                                class="btn btn-lg btn-primary btn-block">Cancelar
                                         </button>
 
                                     </fieldset>

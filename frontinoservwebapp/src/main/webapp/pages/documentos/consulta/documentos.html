@@ -13,6 +13,11 @@
                 border-radius: 32px;
                 color: black;
             }
+
+            .rojo{
+                color: red;
+            }
+
         </style>
 
         <link href="css/datatables/dataTables.bootstrap.css" rel="stylesheet">
@@ -35,7 +40,7 @@
                 <div class="col-lg-12">
                     <h1 class="page-header">
                         {{translation.titDocs}}
-                        <button class="btn btn-primary btn-circle pull-right"
+                        <button class="btn btn-success btn-sm pull-right"
                                 ng-click="regresar()" title="{{translation.backDashBoard}}">
                             <i class="fa fa-arrow-left"></i>
                         </button>
@@ -47,162 +52,182 @@
             </div>
 
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="panel panel-default">
+            <div class="panel-group">
+                <div class="panel panel-primary">
 
-                        <div class="panel-heading">
-                            <h4 class="panel-title">  
-                                <a data-toggle="collapse" data-target="#collapse1">
-                                    {{translation.searchFilter}}
-                                    <i class="btn btn-primary btn-circle fa fa-search"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapse1" class="panel-collapse collapse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">  
+                            <a data-toggle="collapse" data-target="#collapse1" style="text-decoration: none; cursor: pointer">
+                                {{translation.searchFilter}}
+                                <i style="margin-left: 10px;" class="btn btn-success btn-sm fa fa-search"></i>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse">
 
 
-                            <div class="panel-body">
-                                <div class="row-">
-                                    <div class="col-sm-1">
-                                        <label for="desde">{{translation.from}}</label>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
-                                                   ng-model="fecDesde" 
-                                                   is-open="opendesde" 
-                                                   show-button-bar="false"
-                                                   datepicker-options="dateOptions" ng-required="true" 
-                                                   close-text="Close" />
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="openDesde()"><i class="fa fa-calendar"></i></button>
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <label for="desde">{{translation.to}}</label>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
-                                                   ng-model="fecHasta" 
-                                                   is-open="openhasta" 
-                                                   show-button-bar="false"
-                                                   datepicker-options="dateOptions" ng-required="true" 
-                                                   close-text="Close" />
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="openHasta()"><i class="fa fa-calendar"></i></button>
-                                            </span>
-                                        </p>
-                                    </div>
-
-                                    <div class="col-sm-1">
-                                        <label for="tipDoc" title="{{translation.kindDocs}}">{{translation.kind}}</label>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <select class="form-control" id="tipDoc" ng-model="tipDoc" title="{{translation.kindDocs}}">
-                                            <option value="D">{{translation.debit}}</option>
-                                            <option value="C">{{translation.credit}}</option>
-                                            <option value="T">{{translation.all}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <label for="saldo" title="{{translation.balanceDesc}}">{{translation.balance}}</label>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <select class="form-control" id="tipoSaldo" ng-model="tipoSaldo" title="{{translation.balanceDesc}}">
-                                            <option value="1">{{translation.withBalance}}</option>
-                                            <option value="2">{{translation.withBalanceDefeated}}</option>
-                                            <option value="3">{{translation.withOutBalance}}</option>
-                                            <option value="4">{{translation.all}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-1 text-right">
-                                        <button type="submit" class="btn btn-primary"
-                                                ng-click="listadoDocumentos()">Buscar</button>
-                                    </div>
+                        <div class="panel-body">
+                            <div class="row-">
+                                <div class="col-sm-1">
+                                    <label for="desde">{{translation.from}}</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <p class="input-group">
+                                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                                               ng-model="fecDesde" 
+                                               is-open="opendesde" 
+                                               show-button-bar="false"
+                                               datepicker-options="dateOptions" ng-required="true" 
+                                               close-text="Close" />
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="openDesde()"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label for="desde">{{translation.to}}</label>
+                                </div>
+                                <div class="col-lg-2">
+                                    <p class="input-group">
+                                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                                               ng-model="fecHasta" 
+                                               is-open="openhasta" 
+                                               show-button-bar="false"
+                                               datepicker-options="dateOptions" ng-required="true" 
+                                               close-text="Close" />
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="openHasta()"><i class="fa fa-calendar"></i></button>
+                                        </span>
+                                    </p>
                                 </div>
 
+                                <div class="col-sm-1">
+                                    <label for="tipDoc" title="{{translation.kindDocs}}">{{translation.kind}}</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="form-control" id="tipDoc" ng-model="tipDoc" title="{{translation.kindDocs}}">
+                                        <option value="D">{{translation.debit}}</option>
+                                        <option value="C">{{translation.credit}}</option>
+                                        <option value="T">{{translation.all}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label for="saldo" title="{{translation.balanceDesc}}">{{translation.balance}}</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="form-control" id="tipoSaldo" ng-model="tipoSaldo" title="{{translation.balanceDesc}}">
+                                        <option value="1">{{translation.withBalance}}</option>
+                                        <option value="2">{{translation.withBalanceDefeated}}</option>
+                                        <option value="3">{{translation.withOutBalance}}</option>
+                                        <option value="4">{{translation.all}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-1 text-right">
+                                    <button type="submit" class="btn btn-success"
+                                            ng-click="listadoDocumentos()">Buscar</button>
+                                </div>
                             </div>
+
                         </div>
-
-
-
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th># Doc</th>
-                                            <th>Fecha Documento</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Tipo</th>
-                                            <th>Monto</th>
-                                            <th>Saldo</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="item in objetosList">
-                                            <td>{{item.nro_dvt}}</td>
-                                            <td>{{item.fec_dvt}}</td>
-                                            <td>{{item.fve_dvt}}</td>
-                                            <td title="{{item.ide_tdo.nom_tdo}}"> {{item.ide_tdo.cod_tdo}}</td>
-                                            <td>{{item.mto_dvt | number:2}}</td>
-                                            <td>{{item.sal_dvt | number:2}}</td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.table-responsive -->
-                        </div>
-                        <!-- /.panel-body -->
                     </div>
-                    <!-- /.panel -->
+
                 </div>
             </div>
+
+            <div class="panel-group">
+                <div class="panel panel-primary">
+
+                    <div class="panel-heading">
+                        <h4 class="panel-title">  
+                            Listado de Documentos
+                        </h4>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th># Doc</th>
+                                        <th>Fecha Documento</th>
+                                        <th>Fecha Vencimiento</th>
+                                        <th>Monto</th>
+                                        <th>Saldo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in objetosList">
+                                        <td title="">
+                                            <label ng-show="item.ide_tdo.tca_tdo === '1'" class="btn btn-success btn-sm" title="{{item.ide_tdo.cod_tdo}} - {{item.ide_tdo.nom_tdo.trim()}}  Documento de Debito">
+                                                D
+                                            </label>
+                                            <label ng-show="item.ide_tdo.tca_tdo === '2'" class="btn btn-info btn-sm" title="{{item.ide_tdo.cod_tdo}} - {{item.ide_tdo.nom_tdo.trim()}}  Documento de Credito">
+                                                C
+                                            </label>
+                                        </td>
+                                        <td>{{item.nro_dvt}}</td>
+                                        <td>{{item.fec_dvt| date: 'dd/MM/yyyy' }}</td>
+                                        <td ng-class="styleStatus(item)">{{item.fve_dvt| date: 'dd/MM/yyyy'}}</td>
+                                        <td>{{item.mto_dvt| number:2}}</td>
+                                        <td ng-class="styleStatus(item)">{{item.sal_dvt| number:2}}</td>
+                                    </tr>
+                                    <tr ng-show="objetosList.length <= 0">
+                                        <td colspan="6" class="text-center">
+                                            <h4>Busqueda no genero resultados</h4>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+
             <!-- /#page-wrapper -->
 
             <script>
-                $(document).ready(function () {
-                    $('#dataTables-example').DataTable();
-                });
+                        $(document).ready(function () {
+                            $('#dataTables-example').DataTable();
+                        });
 
 
-                $(document).ready(function () {
-                    $('.datepicker').datepicker({
-                        format: "dd/mm/yyyy",
-                        language: "es",
-                        autoclose: true,
-                        todayHighlight: true,
-                        startDate: '+1d'
-                    });
-                });
+                        $(document).ready(function () {
+                            $('.datepicker').datepicker({
+                                format: "dd/mm/yyyy",
+                                language: "es",
+                                autoclose: true,
+                                todayHighlight: true,
+                                startDate: '+1d'
+                            });
+                        });
 
 
-                $(function () {
+                        $(function () {
 
-                    $('#dp3').datepicker({
-                        autoclose: true
-                    });
+                            $('#dp3').datepicker({
+                                autoclose: true
+                            });
 
-                    $('.date-picker').datepicker({
-                        autoclose: true
-                    });
-
-
-                    $('#datetimepicker2').datepicker(
-                            {
-                                "setDate": new Date(),
-                                "autoclose": true
-                            }
-                    );
+                            $('.date-picker').datepicker({
+                                autoclose: true
+                            });
 
 
-                });
+                            $('#datetimepicker2').datepicker(
+                                    {
+                                        "setDate": new Date(),
+                                        "autoclose": true
+                                    }
+                            );
+
+
+                        });
 
 
             </script> 

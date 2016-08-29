@@ -16,6 +16,20 @@ angular.module('pedidosSeguimientoService', [])
                                     + "token=" + token
                                     + "&id=" + id);
 
+                },
+                status: function (token, ideped, status) {
+                    return $http({
+                        method: 'POST',
+                        url: FRONTINOCLI + 'pedidos/status?token='+token,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        dataType: "json",
+                        data: $.param({
+                            'ideped': ideped,
+                            'status': status
+                        })
+                    });
                 }
             };
         })

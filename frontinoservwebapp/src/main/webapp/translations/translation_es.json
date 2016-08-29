@@ -12,6 +12,8 @@
     "search": "Buscar",
     "products": "Articulos",
     "yourOrder": "Su Orden",
+    "yourOrderProducts": "Produtos Agregados a su Orden",
+    "yourOrderTotals":"Totales de Orden de Pedido",
     "totals": "Totales",
     "kind": "Tipos",
     "kindDocs": "Tipos de Documento",
@@ -34,5 +36,11 @@
     "category": "Categoria",
     "subCategory": "Sub Categoria",
     "filter": "Filtrar",
-    "productInfo": "Información de Articulo"
+    "productInfo": "Información de Articulo",
+    "advanceSearch":"Busqueda Avanzada",
+    "titDeleteOrder":"Anular Pedido",
+    "titconfirmOrder":"confirmar Pedido, sin esta confirmación su pedido no podrá ser procesado",
+    "titOrderDetail":"Visualice el detalle de su pedido",
+    "user":"Usuario",
+    "chagePassword":"Cambio de Password"
 }

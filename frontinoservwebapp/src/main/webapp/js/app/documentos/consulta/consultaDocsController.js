@@ -13,7 +13,7 @@ angular.module('frontinoCli.consultaDocs', ['ui.bootstrap', 'consultaDocsService
             $scope.tipDoc = 'D';
             ($scope.tipobus === 'S') ? $scope.tipoSaldo = '2' : $scope.tipoSaldo = '1';
 
-
+            $scope.format='dd/MM/yyyy';
             $scope.valoresFechas = function () {
                 var hoy = new Date();
                 var day = hoy.getDate();
@@ -62,8 +62,13 @@ angular.module('frontinoCli.consultaDocs', ['ui.bootstrap', 'consultaDocsService
                 });
             };
             $scope.listadoDocumentos();
-
-
+            $scope.hoy=new Date();
+            $scope.styleStatus = function (item) {
+                if($scope.hoy>valorFecha(item.fve_dvt)){
+                    return 'rojo';
+                }
+                
+            };
 
             $scope.translate = function () {
                 translationService.getTranslation($scope, $scope.selectedLanguage);
@@ -76,4 +81,11 @@ angular.module('frontinoCli.consultaDocs', ['ui.bootstrap', 'consultaDocsService
         ;
 
 
-        
+function valorFecha(valor) {
+    var cadena = valor.split("-");
+    var fecha = new Date();
+    fecha.setYear(parseInt(cadena[0]));
+    fecha.setMonth(parseInt(cadena[1]) - 1);
+    fecha.setDate(parseInt(cadena[2]));
+    return  fecha;
+}

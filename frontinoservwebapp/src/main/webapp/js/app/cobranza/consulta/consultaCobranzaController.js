@@ -60,32 +60,6 @@ angular.module('frontinoCli.consultaCobranza', ['ui.bootstrap', 'consultaCobranz
             if ($scope.objetosList.length <= 0) {
                 $scope.listadoPedidos();
             }
-
-        })
-        .controller('DetallePedSegCtrl', function ($scope, $cookies, $window, $location, $routeParams, factoryPedSegService) {
-            $scope.pageClass = 'page-back';
-            $scope.validaSesion = function () {
-                if (!$cookies.get('csrftoken')) {
-                    $window.location.href = "index.html";
-                }
-            };
-            $scope.validaSesion();
-            $scope.idePed = $routeParams.idePed;
-            $scope.detalleList = [];
-            factoryPedSegService.detallePedidos(
-                    $cookies.get('csrftoken'), $scope.idePed
-                    )
-                    .success(function (data) {
-                        $scope.detalleList = data;
-                    }).error(function (data) {
-            });
-
-
-            $scope.regresar = function () {
-                //$location.path('/sample/' + $scope.checkinId, false);
-                $location.path('/seguimiento/', false);
-            };
-
         });
 
 

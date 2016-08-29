@@ -21,31 +21,177 @@ angular.module('frontinoCli.pedidos', ['ngAnimate', 'ui.bootstrap', 'pedidosServ
                 return result;
             };
 
+            $scope.processConsultar = $(
+                    '<div class="modal fade" id="process" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"  data-keyboard="false" >'
+
+
+                    + '<div class="modal-dialog" >'
+                    + '<div class="modal-content">'
+                    + '<div class="modal-header">'
+                    + '<h4 class="modal-title" id="myModalLabel">Consultado</h4>'
+                    + '</div>'
+                    + '<div class="modal-body">'
+                    + 'Cargando Articulos'
+                    + '<div class="progress">'
+                    + '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 100%">'
+                    + '<span class="sr-only">10% Complete</span>'
+                    + '</div>'
+                    + '</div>'
+
+                    + '</div>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>');
+
+            $scope.processGuardar = $(
+                    '<div class="modal fade" id="process" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"  data-keyboard="false" >'
+
+
+                    + '<div class="modal-dialog" >'
+                    + '<div class="modal-content">'
+                    + '<div class="modal-header">'
+                    + '<h4 class="modal-title" id="myModalLabel">Procesando</h4>'
+                    + '</div>'
+                    + '<div class="modal-body">'
+                    + 'Almacenenado Pedido'
+                    + '<div class="progress">'
+                    + '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 100%">'
+                    + '<span class="sr-only">10% Complete</span>'
+                    + '</div>'
+                    + '</div>'
+
+                    + '</div>'
+                    + '</div>'
+                    + '</div>'
+                    + '</div>');
+
+            $scope.reasignarSeleccionados = function () {
+                for (var j = 0; j < $scope.objetosList.length; j++) {
+                    for (var k = 0; k < $scope.objetosSeleccionados.length; k++) {
+
+                        if ($scope.objetosList[j].ide_pro.ide_pro === $scope.objetosSeleccionados[k].ide_pro.ide_pro
+                                &&
+                                $scope.objetosList[j].ide_und.ide_und === $scope.objetosSeleccionados[k].ide_und.ide_und
+                                ) {
+                            //Eliminamos la linea en el principal
+                            $scope.objetosList.splice(j, 1);
+                            //agregamis la linea calculada en esa posicion
+                            $scope.objetosList.splice(j, 0, $scope.objetosSeleccionados[k]);
+
+                            /*$scope.objetosList[j].can_ddv = $scope.objetosSeleccionados[k].can_ddv;
+                             $scope.objetosSeleccionados[k] = $scope.objetosList[j];*/
+                        }
+
+                    }
+                }
+            };
+
             var precargado = JSON.parse($window.sessionStorage.getItem('addPedido'));
             if (precargado) {
-                $scope.totales = precargado.totales || {};
+                $scope.busqueda = precargado.busqueda || {};
                 $scope.objetosList = precargado.listado || [];
                 $scope.objetosSeleccionados = precargado.seleccionados || [];
+                $scope.totales = precargado.totales || {};
+                $scope.reasignarSeleccionados();
             } else {
                 $scope.objetosList = [];
                 $scope.objetosSeleccionados = [];
+                $scope.busqueda = {};
+                $scope.busqueda.familia = {};
+                $scope.busqueda.subFamilia = {};
+                $scope.busqueda.filtro = '';
+                $scope.busqueda.pagina = 1;
                 $scope.totales = $scope.iniciarTotales();
             }
+            $scope.totales = $scope.iniciarTotales();
+
             $scope.consultarListado = function () {
-                factoryPedidosService.listadoArticulos(
-                        $cookies.get('csrftoken')
-                        )
+                $scope.processConsultar.modal('show');
+                var familia = 0;
+                if ($scope.busqueda.subFamilia && $scope.busqueda.subFamilia.ide_fam > 0) {
+                    familia = $scope.busqueda.subFamilia.ide_fam;
+                } else if ($scope.busqueda.familia && $scope.busqueda.familia.ide_fam > 0) {
+                    familia = $scope.busqueda.familia.ide_fam;
+                }
+                factoryPedidosService.listadoArticulos($cookies.get('csrftoken'), familia,
+                        $scope.busqueda.filtro, $scope.busqueda.pagina)
                         .success(function (data) {
-                            $scope.objetosList = data;
-                            $scope.objetosSeleccionados = [];
-                            $scope.totales = $scope.iniciarTotales();
+                            $scope.almancenaObjetos(); //antes de busqueda para mantener filtros
+                            $scope.objetosList = JSON.parse(data.registros);
+                            $scope.reasignarSeleccionados();
+                            $scope.busqueda.pagina = data.pagina;
+                            $scope.busqueda.paginas = data.paginas;
+                            $scope.totalizar();
+                            $scope.processConsultar.modal('hide');
                         }).error(function (dataError) {
+                    $scope.processConsultar.modal('hide');
                     console.log(dataError);
                     $window.sessionStorage.removeItem('segPedido');
                 });
+
             };
+            $scope.ir = function (indice) {
+                $scope.busqueda.pagina = indice;
+                $scope.consultarListado();
+            };
+
+
+            //Familias
+            $scope.familiasList = [];
+            $scope.subFamiliasList = [];
+            factoryPedidosService.listadoFamilias(
+                    $cookies.get('csrftoken')
+                    ).success(function (data) {
+                $scope.familiasList = data;
+            }).error(function (dataError) {
+                console.log(dataError);
+            });
+
+            $scope.filtroSubFamilia = function () {
+                $scope.subFamiliasList = [];
+                for (var i = 0; i < $scope.familiasList.length; i++) {
+                    if ($scope.familiasList[i].pad_fam) {
+                        if ($scope.familiasList[i].pad_fam.ide_fam === $scope.busqueda.familia.ide_fam) {
+                            $scope.subFamiliasList.push($scope.familiasList[i]);
+                        }
+                    }
+                }
+            };
+
+            $scope.getPaginas = function () {
+                return new Array($scope.busqueda.paginas);
+            };
+
+            $scope.clasePagina = function (indice) {
+                if ((indice + 1) === $scope.busqueda.pagina) {
+                    return 'active';
+                } else {
+                    return '';
+                }
+            };
+
+            $scope.claseInicio = function () {
+                if ($scope.busqueda.pagina === 1) {
+                    return 'disabled';
+                } else {
+                    return '';
+                }
+            };
+
+            $scope.claseFin = function () {
+                if ($scope.busqueda.pagina === $scope.busqueda.paginas) {
+                    return 'disabled';
+                } else {
+                    return '';
+                }
+            };
+
+
+            $scope.listadoArticulos = function () {
+                $scope.consultarListado();
+            };
+
             if ($scope.objetosList.length <= 0) {
-                console.log('consulta listado');
                 $scope.consultarListado();
             }
             $scope.regresar = function () {
@@ -58,7 +204,6 @@ angular.module('frontinoCli.pedidos', ['ngAnimate', 'ui.bootstrap', 'pedidosServ
             $scope.selectedLanguage = IDIOMA;
             $scope.translate();
 
-
             $scope.seleccion = function (cantidad, linea) {
                 if (linea.can_ddv + (cantidad) <= 0) {
                     linea.can_ddv = 0;
@@ -67,6 +212,7 @@ angular.module('frontinoCli.pedidos', ['ngAnimate', 'ui.bootstrap', 'pedidosServ
                 }
                 $scope.orden(linea);
             };
+
 
 
             $scope.orden = function (linea) {
@@ -129,6 +275,7 @@ angular.module('frontinoCli.pedidos', ['ngAnimate', 'ui.bootstrap', 'pedidosServ
                 datos.filtro = {};
                 datos.totales = $scope.totales;
                 datos.listado = $scope.objetosList;
+                datos.busqueda = $scope.busqueda;
                 datos.seleccionados = $scope.objetosSeleccionados;
                 $window.sessionStorage.setItem('addPedido', JSON.stringify(datos));
             };
@@ -137,11 +284,13 @@ angular.module('frontinoCli.pedidos', ['ngAnimate', 'ui.bootstrap', 'pedidosServ
                 $window.sessionStorage.removeItem('addPedido');
             };
 
-            $scope.limpiarDetalle = function () {
+            $scope.limpiarDetalle = function (consulta) {
                 $scope.totales = $scope.iniciarTotales();
                 $scope.objetosList = [];
                 $scope.objetosSeleccionados = [];
-                $scope.consultarListado();
+                if (consulta) {
+                    $scope.consultarListado();
+                }
             };
 
             $scope.itemPreview = {};
@@ -166,6 +315,39 @@ angular.module('frontinoCli.pedidos', ['ngAnimate', 'ui.bootstrap', 'pedidosServ
                         }
                     }
                 });
+            };
+
+            $scope.save = function () {
+                $scope.mensajeError = null;
+                $scope.muestraMensajeError = false;
+
+                bootbox.confirm("Desea Registrar Pedido?", function (result) {
+                    if (result) {
+                        $scope.processGuardar.modal('show');
+                        factoryPedidosService.guardar($cookies.get('csrftoken'),
+                                $scope.objetosSeleccionados)
+                                .success(function (data) {
+                                    $scope.processGuardar.modal('hide');
+                                    $scope.limpiarDetalle(false);
+                                    $scope.eliminarObjetos();
+                                    bootbox.alert("Peido Registrado Exitosamente! "
+                                            + "<br> "
+                                            + "Debe confirmar pedido para finalizar proceso", function () {
+                                                $window.location.href = "principal.html";
+                                            });
+                                }).error(function (dataError) {
+                            $scope.processGuardar.modal('hide');
+                            if (dataError) {
+                                $scope.muestraMensajeError = dataError.error;
+                                $scope.mensajeError = dataError.des_error;
+                            } else {
+                                $scope.muestraMensajeError = true;
+                                $scope.mensajeError = "Error Consultando BackEnd";
+                            }
+                        });
+                    }
+                });
+
 
 
             };
@@ -178,6 +360,18 @@ angular.module('frontinoCli.pedidos', ['ngAnimate', 'ui.bootstrap', 'pedidosServ
         });
 
 angular.module('frontinoCli.pedidos').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, item) {
+    $scope.item = item;
+    $scope.ok = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+});
+
+
+angular.module('frontinoCli.pedidos').controller('ModalSaveCtrl', function ($scope, $uibModalInstance, item) {
     $scope.item = item;
     $scope.ok = function () {
         $uibModalInstance.dismiss('cancel');

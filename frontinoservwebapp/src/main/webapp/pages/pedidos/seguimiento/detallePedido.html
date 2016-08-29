@@ -32,30 +32,33 @@
 
 
 
-        <div id="page-wrapper">
+        <div >
 
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Detalle de Pedido
-                    
-                    
-                    <button class="btn btn-primary btn-circle pull-right"
-                            ng-click="regresar()" title="Regresar">
-                        <i class="fa fa-arrow-left"></i>
-                    </button>
-                 
+
+
+                        <button class="btn btn-success btn-sm pull-right"
+                                ng-click="regresar()" title="Regresar">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+
                     </h1>
+                    <div class="alert alert-danger" role="alert" ng-show="muestraMensajeError">
+                        {{ mensajeError}}
+                    </div>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="panel panel-default">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             Detalle de Pedido {{idePed}}
 
-                            
+
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -91,48 +94,48 @@
             </div>
             <!-- /#page-wrapper -->
 
+        </div>
+
+        <script>
+                    $(document).ready(function () {
+                        $('#dataTables-example').DataTable();
+                    });
 
 
-            <script>
-                        $(document).ready(function () {
-                            $('#dataTables-example').DataTable();
+                    $(document).ready(function () {
+                        $('.datepicker').datepicker({
+                            format: "dd/mm/yyyy",
+                            language: "es",
+                            autoclose: true,
+                            todayHighlight: true,
+                            startDate: '+1d'
+                        });
+                    });
+
+
+                    $(function () {
+
+                        $('#dp3').datepicker({
+                            autoclose: true
+                        });
+
+                        $('.date-picker').datepicker({
+                            autoclose: true
                         });
 
 
-                        $(document).ready(function () {
-                            $('.datepicker').datepicker({
-                                format: "dd/mm/yyyy",
-                                language: "es",
-                                autoclose: true,
-                                todayHighlight: true,
-                                startDate: '+1d'
-                            });
-                        });
+                        $('#datetimepicker2').datepicker(
+                                {
+                                    "setDate": new Date(),
+                                    "autoclose": true
+                                }
+                        );
 
 
-                        $(function () {
-
-                            $('#dp3').datepicker({
-                                autoclose: true
-                            });
-
-                            $('.date-picker').datepicker({
-                                autoclose: true
-                            });
+                    });
 
 
-                            $('#datetimepicker2').datepicker(
-                                    {
-                                        "setDate": new Date(),
-                                        "autoclose": true
-                                    }
-                            );
-
-
-                        });
-
-
-            </script> 
+        </script> 
 
 
     </body>

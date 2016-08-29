@@ -1,10 +1,24 @@
 angular.module('pedidosService', [])
         .factory('factoryPedidosService', function ($http) {
             return {
-                listadoArticulos: function (token) {
+                listadoArticulos: function (token, familia, filtro, pagina) {
                     return $http.get
                             (FRONTINOCLI + "pedidos/articulospedido?"
+                                    + "token=" + token + "&familia=" + familia
+                                    + "&filtro=" + filtro
+                                    + "&pagina=" + pagina);
+                },
+                listadoFamilias: function (token) {
+                    return $http.get
+                            (FRONTINOCLI + "pedidos/familias?"
                                     + "token=" + token);
+                },
+                guardar: function (token, objeto) {
+                    return $http({
+                        method: 'PUT',
+                        url: FRONTINOCLI + 'pedidos/guardar?token='+token,
+                        data:objeto
+                    });
                 }
             };
         })

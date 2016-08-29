@@ -144,6 +144,6 @@ angular.module('frontinoCli', ['ngRoute', 'ngResource', 'ngCookies',
 
         });
 var IDIOMA = 'es';
-var FRONTINOCLI = 'http://54.214.255.80:9090/frontinoCliService/webresources/';
-//var FRONTINOCLI = 'http://localhost:8080/frontinoCliService/webresources/';
+//var FRONTINOCLI = 'http://54.214.255.80:9090/frontinoservbackend/webresources/';
+var FRONTINOCLI = 'http://localhost:8080/frontinoservbackend/webresources/';
         
