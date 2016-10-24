@@ -28,6 +28,7 @@
         <script src="js/angular/angular-cookies.js"></script>
         <script src="js/app/seguridad/app.js"></script>
         <script src="js/app/seguridad/loginServices.js"></script>
+        <script src="js/bootstrap/bootbox.min.js"></script>
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -61,12 +62,13 @@
                                 <h3 class="panel-title">{{translation.welcome}}</h3>
 
                             </div>
+
                             <div class="panel-body">
                                 <div class="alert alert-danger" role="alert" ng-show="muestraMensajeError">
                                     {{mensajeError}}
                                 </div>
-                                <form name="myForm" role="form" validate>
-                                    <fieldset>
+                                <fieldset ng-hide="activacion">
+                                    <form name="myForm" role="form" validate>
                                         <div class="form-group">
                                             <input ng-show="!empresasList.length" class="form-control" placeholder="{{translation.email}}" name="email" type="email" 
                                                    ng-model="email" required="true"
@@ -101,6 +103,11 @@
                                                 class="btn btn-lg btn-primary btn-block">{{translation.login}}
                                         </button>
 
+                                        <button ng-click="activaRegistro()" type="button"
+                                                ng-show="!empresasList.length"
+                                                class="btn btn-lg btn-default btn-block">{{translation.registrarme}}
+                                        </button> 
+
                                         <button ng-click="ingresar()" ng-disabled="myForm.$invalid"
                                                 ng-show="empresasList.length"
                                                 class="btn btn-lg btn-primary btn-block">Ingresar
@@ -109,10 +116,106 @@
                                                 ng-show="empresasList.length"
                                                 class="btn btn-lg btn-primary btn-block">Cancelar
                                         </button>
+                                    </form>
+                                </fieldset>
+                                <fieldset ng-show="activacion">
+                                    <form name="myForm" role="form" validate>
+                                        <div class="form-group">
+                                            <input class="form-control" placeholder="{{translation.email}}" name="emailActiva" type="email" 
+                                                   ng-model="emailActiva" required="true"
+                                                   data-error="Bruh, that email address is invalid"
+                                                   autofocus>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="form-control" placeholder="{{translation.codActiva}}" name="codigoActiva" type="text" 
+                                                   ng-model="codigoActiva" required="true"
+                                                   data-error="Bruh, that email address is invalid"
+                                                   autofocus>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="form-control" placeholder="{{translation.password}}" name="passwordActiva" type="password" value=""
+                                                   ng-model="passwordActiva" required="true">
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="form-control" placeholder="{{translation.repPassword}}" name="passwordActiva2" type="password" value=""
+                                                   ng-model="passwordActiva2" required="true">
+                                        </div>
+                                        <!-- Change this to a button or input when using this as a form -->
+                                        <div class="form-group">
+                                            <input type="checkbox" id="terminos" ng-model="acepto"/>
+                                            <label for="terminos" style="color: dimgray" >
+                                                                Acepto Terminos y Condiciones
+                                                            </label>
+                                            <br>
+                                            <a data-toggle="modal" data-target="#myModal" style="cursor: pointer">Ver Terminos y Condiciones</a>
+                                            <div id="myModal" class="modal fade" role="dialog">
+                                                <div class="modal-dialog">
 
-                                    </fieldset>
-                                </form>
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title">Términos y Condiciones</h4>
+                                                        </div>
+                                                        <div class="body">
+                                                            <p style="color: dimgray">
+                                                                Estas son las reglas de uso aplicables a nuestro servicio y a nuestros Clientes. En adelante se hará referencia a la persona que contrata cualquiera de los servicios de portalcontadorpublico.com como “El Cliente”.
+                                                                El uso de los servicios contratados asume la aceptación de las siguientes condiciones:
+                                                            </p>
+                                                            <h5>1- Contenidos</h5>
+                                                            <p style="color: dimgray" >
+                                                                Los servicios contratados con portalcontadorpublico.com deben ser utilizados exclusivamente con fines lícitos. Queda estrictamente prohibido el uso de cualquiera de los servicios contratados con portalcontadorpublico.com que violen cualquier Ley local, nacional o internacional.
+                                                                Está Prohibido el uso de nuestros servicios para infringir los derechos de autor o marca comercial. Esto incluye pero no se limita a la copia no autorizada de música, libros, fotografías, o cualquier otro trabajo con derechos de autor. La oferta de venta de cualquier mercancía falsificada de un titular de la marca tendrá como resultado la terminación inmediata de su cuenta
+                                                            </p>
+                                                            <h5>2- Denegación, suspensión o baja del servicio</h5>
+                                                            <p style="color: dimgray" >
+                                                                portalcontadorpublico.com se reserva el derecho a denegar, suspender o cancelar los servicios contratados por el cliente con o sin notificación previa si el cliente incurre en cualquier conducta o actividad que portalcontadorpublico.com considere abuso o violación de alguno de los términos, normas y condiciones aquí expuestas, con o sin previo aviso y no responsabilizándose de las consecuencias que pudieran resultar por este motivo.
+                                                            </p>
+                                                            <h5>3- Confidencialidad</h5>
+                                                            <p style="color: dimgray" >
+                                                                portalcontadorpublico.com mantendrá la confidencialidad y la seguridad de la información facilitada por el cliente para tramites de visado, tal como se describe en la Ley de Protección de Datos.
+                                                            </p>
+                                                            <h5>4- Pérdida de datos</h5>
+                                                            <p style="color: dimgray" >
+                                                                portalcontadorpublico.com no se hace responsable por la pérdida de datos en el servidor causada por usuarios, fallos en nuestro sistema o actualizaciones en nuestros servidores. Es responsabilidad del usuario el mantener una copia de documentos generados por portalcontadorpublico.com. Así también es responsabilidad del usuario mantener bajo resguardo los mails del sistema.
+                                                            </p>
+                                                            <h5>5- Revisión de tramites.</h5>
+                                                            <p style="color: dimgray" >
+                                                                portalcontadorpublico.com no se hace responsable por demoras en revisión de documentos por parte de los organismos encargados de realizar estas tareas. 
+                                                                <br>
+                                                                El tiempo de respuesta depende directamente de la disponibilidad del personal del organismo competente engardado de la revisión de los tramites de visado
+                                                            </p>
+                                                            <h5>6- Modificaciones.</h5>
+                                                            <p style="color: dimgray" >
+                                                                portalcontadorpublico.com se reserva el derecho a introducir modificaciones en las características y precios de los planes y/o servicios ofertados, con o sin previo aviso. Toda notificación que afecte a las características técnicas de los servicios ofertados tendrá lugar directamente a través de nuestras páginas web en Internet.
+                                                            </p>
+                                                            <h5>7- Responsabilidad por el contenido.</h5>
+                                                            <p style="color: dimgray" >
+                                                                Usted, como cliente de portalcontadorpublico.com, es el único responsable por el contenido de los documentos subidos al portalcontadorpublico.com. portalcontadorpublico.com en ningún momento afirma que tiene respaldos de sus datos en lugares externos al servidor, por lo que no podrá ser señalada como responsable de perdida de información si esto llegara a suceder. 
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button ng-click="activateUser()" ng-disabled="myForm2.$invalid"
+                                                class="btn btn-lg btn-primary btn-block">{{translation.registrarme}}
+                                        </button>  
+
+                                        <button ng-click="desActivaRegistro()" type="button"
+                                                class="btn btn-lg btn-default btn-block">{{translation.cancelar}}
+                                        </button>  
+
+                                    </form>
+                                </fieldset>
+
                             </div>
+
                         </div>
                     </div>
                 </div>

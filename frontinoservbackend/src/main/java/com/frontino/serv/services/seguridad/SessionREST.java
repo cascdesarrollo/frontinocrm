@@ -5,6 +5,7 @@
  */
 package com.frontino.serv.services.seguridad;
 
+import com.frontino.serv.logica.email.Correos;
 import com.frontino.serv.logica.seguridad.Authenticator;
 import com.frontino.serv.logica.seguridad.Conector;
 import com.frontinoseg.logica.seguridad.sesion.SesionDto;
@@ -206,7 +207,8 @@ public class SessionREST {
         String[] valores = autenticador.valoresCadena(_token);
         SesionDto sesion = null;
         try {
-            sesion = autenticador.getSession(valores[0], valores[1]);
+            sesion = autenticador.obtenerDatos(getConector().getConDirectCloud(), valores[0], valores[1],
+                    Integer.parseInt(valores[2]), Integer.parseInt(valores[3]));
         } catch (Exception ex) {
             Logger.getLogger(SessionREST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -214,6 +216,11 @@ public class SessionREST {
             try {
                 if (autenticador.cambiarPassword(getConector().getConDirectCloud(), valores[0], _pold, _pnew //por ahora para que siempre haga commit
                         , true)) {
+                    SessionDataServiceDto data = autenticador.prepararData(getConector().getCon(sesion.getConexName()), sesion, Integer.parseInt(valores[2]), Integer.parseInt(valores[3]));
+                    new Correos().enviarCorreoCambioContrasena(
+                            data.getNomEmp(), data.getNomTer(),
+                            valores[0], _pnew);
+
                     JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
                     jsonObjBuilder.add("success", true);
                     JsonObject jsonObj = jsonObjBuilder.build();
@@ -257,6 +264,76 @@ public class SessionREST {
             jsonObjBuilder.add("des_error", "No ha iniciado session");
             JsonObject jsonObj = jsonObjBuilder.build();
             return getNoCacheResponseBuilder(Response.Status.UNAUTHORIZED).entity(jsonObj.toString()).build();
+        }
+    }
+
+    @POST
+    @Path("activar")
+    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response activarNuevoUsuario(
+            @FormParam("emailactiva") String email,
+            @FormParam("password") String password,
+            @FormParam("codigo") String codigo
+    ) {
+
+        Authenticator autenticador = Authenticator.getInstance();
+        try {
+            int[] datosId = autenticador.activarNuevoUsuario(getConector().getConDirectCloud(),
+                    email, password, codigo, true);
+            if (datosId[0] > 0) {
+                //Iniciar sesion y cargar datos
+                String authToken = autenticador.login(getConector().getConDirectCloud(), email, password);
+                SesionDto sesion = new SesionDto();
+                String[] datosNombres = autenticador.consultarEmpresa(getConector().getConDirectCloud(), email, datosId[0], datosId[1]);
+                new Correos().enviarCorreoActivacion(
+                        datosNombres[0],
+                        datosNombres[1],
+                        email, password);
+                List<Object> arr = autenticador.listadoEmpresas(getConector().getConDirectCloud(), authToken);
+                JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+                jsonObjBuilder.add("auth_token", authToken);
+                JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+                for (Object objeto : arr) {
+                    String[] empresa = (String[]) objeto;
+                    jsonArrayBuilder.add(
+                            Json.createObjectBuilder()
+                            .add("ideEmp", empresa[0])
+                            .add("nomEmp", empresa[1])
+                            .add("ideTer", empresa[2])
+                    );
+                }
+                jsonObjBuilder.add("empresas", jsonArrayBuilder);
+                JsonObject jsonObj = jsonObjBuilder.build();
+                return getNoCacheResponseBuilder(Response.Status.OK).entity(jsonObj.toString())
+                        .build();
+            } else {
+                JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+                jsonObjBuilder.add("error", true);
+                jsonObjBuilder.add("des_error", "No se pudo Cambiar Contraseña");
+                JsonObject jsonObj = jsonObjBuilder.build();
+                return getNoCacheResponseBuilder(Response.Status.CONFLICT).entity(jsonObj.toString()).build();
+            }
+
+        } catch (final LoginException ex) {
+            JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+            jsonObjBuilder.add("error", true);
+            jsonObjBuilder.add("des_error", "Credenciales Invalidas");
+            JsonObject jsonObj = jsonObjBuilder.build();
+            return getNoCacheResponseBuilder(Response.Status.UNAUTHORIZED).entity(jsonObj.toString()).build();
+        } catch (final Exception ex) {
+            JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+            jsonObjBuilder.add("error", true);
+            jsonObjBuilder.add("des_error", "Error Validando crenciales " + ex.getMessage());
+            JsonObject jsonObj = jsonObjBuilder.build();
+            return getNoCacheResponseBuilder(Response.Status.UNAUTHORIZED).entity(jsonObj.toString()).build();
+        } finally {
+            try {
+                //Se mata aqui porque hace 2 consultas
+                getConector().matarConexionDirectCloud();
+            } catch (SQLException ex) {
+                Logger.getLogger(SessionREST.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

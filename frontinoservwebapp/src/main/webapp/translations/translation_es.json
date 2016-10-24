@@ -45,7 +45,10 @@
     "chagePassword": "Cambio de Password",
     "titCambioPassword":"Cambio de Password",
     "passwordNuevo": "Nueva Contraseña",
-    "repPassword": "Confirmar Contrasñe",
-    "passwordActual": "Contraseña Actual"
+    "repPassword": "Confirmar Contraseña",
+    "passwordActual": "Contraseña Actual",
+    "registrarme" : "Registrarme",
+    "codActiva": "Codigo de Activación",
+    "cancelar":"Cancelar"
 
 }

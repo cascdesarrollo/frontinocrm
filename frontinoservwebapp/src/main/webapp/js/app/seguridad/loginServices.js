@@ -27,6 +27,21 @@ angular.module('loginServices', [])
                             'valida': token
                         })
                     });
+                },
+                activarusuario: function (username, password, codigo) {
+                    return $http({
+                        method: 'POST',
+                        url: FRONTINOCLI + 'session/activar',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        dataType: "json",
+                        data: $.param({
+                            'emailactiva': username,
+                            'password': password,
+                            'codigo': codigo
+                        })
+                    });
                 }
             };
         })

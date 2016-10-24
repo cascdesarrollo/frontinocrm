@@ -3,6 +3,7 @@ angular.module('app', ['ngRoute', 'ngResource', 'ngCookies', 'loginServices'])
             if ($cookies.get('csrftoken')) {
                 $window.location.href = 'principal.html';
             }
+            $scope.activacion = false;
             $scope.empresasList = {};
             $scope.empresa = null;
             $scope.consultando = false;
@@ -97,7 +98,69 @@ angular.module('app', ['ngRoute', 'ngResource', 'ngCookies', 'loginServices'])
 
             };
 
+            $scope.activaRegistro = function () {
+                $scope.activacion = true;
+                $scope.iniciaValoresRegistro();
+            };
 
+            $scope.desActivaRegistro = function () {
+                $scope.activacion = false;
+            };
+
+            $scope.iniciaValoresRegistro = function () {
+                $scope.emailActiva = null;
+                $scope.passwordActiva = null;
+                $scope.passwordActiva2 = null;
+                $scope.codigoActiva = null;
+                $scope.password = null;
+                $scope.acepto = false;
+            };
+
+            $scope.activateUser = function () {
+                $scope.mensajeError = null;
+                $scope.muestraMensajeError = false;
+                if (!$scope.acepto) {
+                    $scope.mensajeError = 'Debe Aceptar Terminos y Condiciones';
+                    $scope.muestraMensajeError = true;
+                    return;
+                }
+                if ($scope.passwordActiva !== $scope.passwordActiva2) {
+                    $scope.mensajeError = 'Contraseñas Ingresadas No Coinciden';
+                    $scope.muestraMensajeError = true;
+                    return;
+                }
+                $scope.process.modal('show');
+                $scope.consultando = true;
+                factoryLoginService.activarusuario($scope.emailActiva, $scope.passwordActiva, $scope.codigoActiva)
+                        .success(function (data) {
+                            $scope.process.modal('hide');
+                            bootbox.alert("Su cuenta ha sido activada!");
+                            $scope.activacion = false;
+                            $scope.email = $scope.emailActiva;
+                            $scope.iniciaValoresRegistro();
+                            $scope.auth_token = data.auth_token;
+                            if (data.empresas.length > 1) {
+                                $scope.empresasList = data.empresas;
+                            } else {
+                                $scope.empresa = data.empresas[0];
+                                $cookies.put('csrftoken', $scope.email + '/' + $scope.empresa.ideEmp +
+                                        'e' + $scope.empresa.ideTer +
+                                        'e' + $scope.auth_token);
+                                $window.location.href = "principal.html";
+                            }
+                            $scope.consultando = false;
+
+                        }).error(function (data) {
+                    $scope.process.modal('hide');
+                    if (data) {
+                        $scope.muestraMensajeError = data.error;
+                        $scope.mensajeError = data.des_error;
+                    } else {
+                        $scope.muestraMensajeError = true;
+                        $scope.mensajeError = "Error Consultando BackEnd";
+                    }
+                });
+            };
 
             $scope.translate = function () {
                 translationService.getTranslation($scope, $scope.selectedLanguage);

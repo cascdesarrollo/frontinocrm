@@ -270,11 +270,10 @@ public final class Authenticator {
         }
         return null;
     }
-    
-    
-    public boolean cambiarPassword(Connection _conact, String _username, String _password, String _newPassword, boolean _commit) 
+
+    public boolean cambiarPassword(Connection _conact, String _username, String _password, String _newPassword, boolean _commit)
             throws Exception {
-        boolean  result = false;
+        boolean result = false;
         ResultSet rs;
         Listar sel = new Listar(_conact);
         try {
@@ -285,9 +284,9 @@ public final class Authenticator {
                     .toString());
             rs = sel.ejecutar();
             if (rs.next()) {
-                Modificar upd =new Modificar(_conact);
-                result  = upd.ejecutarUpdate(_commit, "UPDATE cli002d SET pas_ter=md5('"
-                +_newPassword+"') WHERE id_cli="+rs.getInt("id_cli"));
+                Modificar upd = new Modificar(_conact);
+                result = upd.ejecutarUpdate(_commit, "UPDATE cli002d SET pas_ter=md5('"
+                        + _newPassword + "') WHERE id_cli=" + rs.getInt("id_cli"));
                 upd.cerrar();
             } else {
                 throw new LoginException("Credenciales de Usuario Invalidas!");
@@ -296,6 +295,74 @@ public final class Authenticator {
             sel.cerrar();
         } catch (Exception ex) {
             throw new LoginException(ex.getMessage());
+        }
+        return result;
+    }
+
+    public static String genearCodigoActivacion() {
+        String uuid = UUID.randomUUID().toString();
+        if (uuid != null && uuid.length() > 6) {
+            uuid = uuid.substring(0, 6);
+        }
+        return uuid;
+    }
+
+    public int[] activarNuevoUsuario(Connection _conact, String _username, String _password, String _codigo, boolean _commit)
+            throws Exception {
+        int[] result = new int[2];
+        ResultSet rs;
+        Listar sel = new Listar(_conact);
+        try {
+            sel.setSentencia(new StringBuilder()
+                    .append("SELECT id_cli, ide_emp FROM cli002d ")
+                    .append(" WHERE ema_ter='").append(_username)
+                    .append("' AND sta_ter='P' AND NOT cod_act IS NULL AND cod_act='").append(_codigo)
+                    .append("'")
+                    .toString());
+            rs = sel.ejecutar();
+            if (rs.next()) {
+                Modificar upd = new Modificar(_conact);
+                upd.ejecutarUpdate(_commit, "UPDATE cli002d SET pas_ter=md5('"
+                        + _password + "'), cod_act=null, sta_ter='1' "
+                        + "WHERE id_cli=" + rs.getInt("id_cli"));
+                upd.cerrar();
+                result[0] = rs.getInt("id_cli");
+                result[1] = rs.getInt("ide_emp");
+            } else {
+                throw new LoginException("Credenciales de Usuario Invalidas!");
+            }
+            rs.close();
+            sel.cerrar();
+        } catch (Exception ex) {
+            throw new LoginException(ex.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 
+     * @param _con
+     * @param _email
+     * @param _idCli
+     * @param _ideEmp
+     * @return
+     * @throws Exception 
+     */
+    public String[] consultarEmpresa(Connection _con, String _email, int _idCli, int _ideEmp) throws Exception {
+        String[] result = new String[2];
+        Listar sel = new Listar(_con);
+        ResultSet rs;
+        try {
+            sel.setSentencia("SELECT nom_emp, nom_ter FROM cli002d "
+                    + " WHERE id_cli=" + _idCli
+                    + " AND ide_emp=" + _ideEmp);
+            rs = sel.ejecutar();
+            if (rs.next()) {
+                result[0] = rs.getString("nom_emp");
+                result[1] = rs.getString("nom_ter");
+            }
+        } catch (Exception ex2) {
+            throw new Exception(ex2.getMessage());
         }
         return result;
     }
