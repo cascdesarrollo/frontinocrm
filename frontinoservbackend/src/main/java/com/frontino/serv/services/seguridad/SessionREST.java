@@ -62,9 +62,9 @@ public class SessionREST {
     ) {
         Authenticator autenticador = Authenticator.getInstance();
         try {
-            String authToken = autenticador.login(getConector().getConMd5(),username, password);
+            String authToken = autenticador.login(getConector().getConDirectCloud(), username, password);
 
-            List<Object> arr = autenticador.listadoEmpresas(getConector().getConMd5(), authToken);
+            List<Object> arr = autenticador.listadoEmpresas(getConector().getConDirectCloud(), authToken);
             JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
             jsonObjBuilder.add("auth_token", authToken);
             JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
@@ -96,7 +96,7 @@ public class SessionREST {
         } finally {
             try {
                 //Se mata aqui porque hace 2 consultas
-                getConector().matarConexionMd5();
+                getConector().matarConexionDirectCloud();
             } catch (SQLException ex) {
                 Logger.getLogger(SessionREST.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -147,7 +147,7 @@ public class SessionREST {
         String[] valores = autenticador.valoresCadena(_token);
         try {
 
-            SesionDto dto = autenticador.obtenerDatos(getConector().getConMd5(), valores[0], valores[1],
+            SesionDto dto = autenticador.obtenerDatos(getConector().getConDirectCloud(), valores[0], valores[1],
                     Integer.parseInt(valores[2]), Integer.parseInt(valores[3]));
 
             return autenticador.prepararData(getConector().getCon(dto.getConexName()), dto, Integer.parseInt(valores[2]), Integer.parseInt(valores[3]));
@@ -161,7 +161,7 @@ public class SessionREST {
         } finally {
             try {
                 //Se mata aqui porque hace 2 consultas
-                getConector().matarConexionMd5();
+                getConector().matarConexionDirectCloud();
                 getConector().matarConexion();
             } catch (SQLException ex) {
                 Logger.getLogger(SessionREST.class.getName()).log(Level.SEVERE, null, ex);
@@ -175,7 +175,7 @@ public class SessionREST {
         //return getNoCacheResponseBuilder(Response.Status.ACCEPTED).entity(jsonObj.toString()).build();
         return null;
     }
-    
+
     private Conector conector = null;
 
     private Conector getConector() {
@@ -183,6 +183,81 @@ public class SessionREST {
             conector = new Conector();
         }
         return conector;
+    }
+
+    @POST
+    @Path("cambiopass")
+    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response cambiarpass(
+            @FormParam("token") String _token,
+            @FormParam("pold") String _pold,
+            @FormParam("pnew") String _pnew,
+            @FormParam("prenew") String _prenew
+    ) {
+        if (!_prenew.equals(_pnew)) {
+            JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+            jsonObjBuilder.add("error", true);
+            jsonObjBuilder.add("des_error", "Contraseña no coincide con confirmacion");
+            JsonObject jsonObj = jsonObjBuilder.build();
+            return getNoCacheResponseBuilder(Response.Status.CONFLICT).entity(jsonObj.toString()).build();
+        }
+        Authenticator autenticador = Authenticator.getInstance();
+        String[] valores = autenticador.valoresCadena(_token);
+        SesionDto sesion = null;
+        try {
+            sesion = autenticador.getSession(valores[0], valores[1]);
+        } catch (Exception ex) {
+            Logger.getLogger(SessionREST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (sesion != null) {
+            try {
+                if (autenticador.cambiarPassword(getConector().getConDirectCloud(), valores[0], _pold, _pnew //por ahora para que siempre haga commit
+                        , true)) {
+                    JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+                    jsonObjBuilder.add("success", true);
+                    JsonObject jsonObj = jsonObjBuilder.build();
+                    return getNoCacheResponseBuilder(Response.Status.OK).entity(jsonObj.toString())
+                            .build();
+                } else {
+                    JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+                    jsonObjBuilder.add("error", true);
+                    jsonObjBuilder.add("des_error", "No se pudo Cambiar Contraseña");
+                    JsonObject jsonObj = jsonObjBuilder.build();
+                    return getNoCacheResponseBuilder(Response.Status.CONFLICT).entity(jsonObj.toString()).build();
+                }
+
+            } catch (Exception ex) {
+                String[] cadError = ex.getMessage().split(":");
+                if (cadError[0].equalsIgnoreCase("GENERAL")) {
+                    System.out.println(cadError[3]);
+                    JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+                    jsonObjBuilder.add("error", true);
+                    jsonObjBuilder.add("des_error", cadError[3]);
+                    JsonObject jsonObj = jsonObjBuilder.build();
+                    return getNoCacheResponseBuilder(Response.Status.CONFLICT).entity(jsonObj.toString()).build();
+                } else {
+                    JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+                    jsonObjBuilder.add("error", true);
+                    jsonObjBuilder.add("des_error", ex.getMessage());
+                    JsonObject jsonObj = jsonObjBuilder.build();
+                    return getNoCacheResponseBuilder(Response.Status.CONFLICT).entity(jsonObj.toString()).build();
+                }
+            } finally {
+                try {
+                    //Se mata aqui porque hace 2 consultas
+                    getConector().matarConexionDirectCloud();
+                } catch (SQLException ex) {
+                    Logger.getLogger(SessionREST.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
+            jsonObjBuilder.add("error", true);
+            jsonObjBuilder.add("des_error", "No ha iniciado session");
+            JsonObject jsonObj = jsonObjBuilder.build();
+            return getNoCacheResponseBuilder(Response.Status.UNAUTHORIZED).entity(jsonObj.toString()).build();
+        }
     }
 
 }

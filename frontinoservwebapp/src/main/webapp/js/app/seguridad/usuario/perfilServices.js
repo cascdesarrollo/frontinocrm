@@ -20,8 +20,27 @@ angular.module('perfilServices', [])
                         url: FRONTINOCLI + 'session/dataSession?valida='
                                 + token
                     });
+                },
+                cambiarPass: function (token, objeto) {
+                    console.log(objeto.password);
+                    console.log(objeto.repassword);
+                    return $http({
+                        method: 'POST',
+                        url: FRONTINOCLI + 'session/cambiopass',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        dataType: "json",
+                        data: $.param({
+                            'token': token,
+                            'pold': objeto.old_password,
+                            'pnew': objeto.password,
+                            'prenew': objeto.repassword
+                        })
+                    });
                 }
-            };
+            }
+            ;
         })
         .factory('translationService', function ($resource) {
             return{

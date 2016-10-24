@@ -7,6 +7,7 @@ import com.frontinoseg.logica.empresa.EmpresaDto;
 import com.frontinoseg.logica.seguridad.sesion.SesionDto;
 import com.frontinoseg.logica.seguridad.sesion.SessionDataServiceDto;
 import com.sy.sentencias.listar.Listar;
+import com.sy.sentencias.modificar.Modificar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -268,6 +269,35 @@ public final class Authenticator {
             }
         }
         return null;
+    }
+    
+    
+    public boolean cambiarPassword(Connection _conact, String _username, String _password, String _newPassword, boolean _commit) 
+            throws Exception {
+        boolean  result = false;
+        ResultSet rs;
+        Listar sel = new Listar(_conact);
+        try {
+            sel.setSentencia(new StringBuilder()
+                    .append("SELECT id_cli FROM cli002d ")
+                    .append(" WHERE ema_ter='").append(_username)
+                    .append("' and pas_ter=md5('").append(_password).append("')")
+                    .toString());
+            rs = sel.ejecutar();
+            if (rs.next()) {
+                Modificar upd =new Modificar(_conact);
+                result  = upd.ejecutarUpdate(_commit, "UPDATE cli002d SET pas_ter=md5('"
+                +_newPassword+"') WHERE id_cli="+rs.getInt("id_cli"));
+                upd.cerrar();
+            } else {
+                throw new LoginException("Credenciales de Usuario Invalidas!");
+            }
+            rs.close();
+            sel.cerrar();
+        } catch (Exception ex) {
+            throw new LoginException(ex.getMessage());
+        }
+        return result;
     }
 
 }

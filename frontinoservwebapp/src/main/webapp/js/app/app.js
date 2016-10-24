@@ -43,6 +43,11 @@ angular.module('frontinoCli', ['ngRoute', 'ngResource', 'ngCookies',
                     templateUrl: 'pages/usuario/perfil.html'
                     , controller: 'PerfilCtrl'
                 });
+                
+                $routeProvider.when('/cambiopassword', {
+                    templateUrl: 'pages/usuario/cambiopassword.html'
+                    , controller: 'CambioPasswordCtrl'
+                });
                 $routeProvider.otherwise({redirectTo: '/'});
             }])
         .controller('MainCtrl', function ($scope, $cookies, $window,
@@ -53,6 +58,8 @@ angular.module('frontinoCli', ['ngRoute', 'ngResource', 'ngCookies',
 
             $scope.validaSesion = function () {
                 if (!$cookies.get('csrftoken')) {
+                    alert('no es');
+                    $cookies.remove('csrftoken');
                     $window.location.href = "index.html";
                 }
             };
@@ -131,7 +138,6 @@ angular.module('frontinoCli', ['ngRoute', 'ngResource', 'ngCookies',
                             console.log('info dash');
                             console.log(data);
                         }
-
                     }).error(function (data) {
 
             });

@@ -82,8 +82,8 @@ public class DataDashboardREST {
                 Fechas fec = new Fechas();
                 String hoy = fec.fechaActual("dd/MM/yyyy");
                 String antes = fec.SumarFecha(hoy, -30, "dd/MM/yyyy");
-                pedidos = ped.contarPedidos(hoy, antes, Integer.parseInt(valores[3]), "1");
-                //TODO Consultar Mensajes
+                //Pedidos 0 pendientes por confirmar
+                pedidos = ped.contarPedidos(antes, hoy, Integer.parseInt(valores[3]), "0");
 
                 JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
                 jsonObjBuilder.add("vencidos", vencidos);

@@ -5,6 +5,8 @@
  */
 package com.frontino.serv.logica.seguridad;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -16,22 +18,31 @@ import java.util.logging.Logger;
  */
 public class Conector {
 
-    private Connection conMd5;
+    private Connection conDirectCloud;
 
-    public Connection getConMd5() {
+    public Connection getConDirectCloud() {
         try {
-            if (conMd5 == null || conMd5.isClosed()) {
-                conMd5 = new com.sy.conexion.Conexion(false).ConexionMd5();
+            File f = new File(".");
+            try {
+                System.out.println(f.getCanonicalPath());
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+                Logger.getLogger(Conector.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (conDirectCloud == null || conDirectCloud.isClosed()) {
+                conDirectCloud = new com.sy.conexion.Conexion(null).getConexion();
             }
         } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
             Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return conMd5;
+        return conDirectCloud;
     }
 
-    public void matarConexionMd5() throws SQLException {
-        if (conMd5 != null) {
-            conMd5.close();
+    public void matarConexionDirectCloud() throws SQLException {
+        if (conDirectCloud != null) {
+            conDirectCloud.close();
         }
     }
 
@@ -43,6 +54,7 @@ public class Conector {
                 con = new com.sy.conexion.Conexion(_params).getConexion();
             }
         } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
             Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
         }
         return con;
